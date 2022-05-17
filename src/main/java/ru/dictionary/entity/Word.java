@@ -11,9 +11,9 @@ import javax.validation.constraints.Size;
 @Table(name = "words")
 
 @NamedQueries({
-        @NamedQuery(name = Word.DELETE_BY_ID, query = "DELETE FROM Word w WHERE w.id=:wordId AND w.user.id=:userId"),
-        @NamedQuery(name = Word.DELETE_BY_IDS, query = "DELETE FROM Word w WHERE w.user.id=:userId AND w.id IN (:wordIds)"),
-        @NamedQuery(name = Word.GET_ALL, query = "SELECT w FROM Word w WHERE w.user.id=:userId"),
+        @NamedQuery(name = Word.DELETE_BY_WORD_ID_AND_USER_ID, query = "DELETE FROM Word w WHERE w.id=:wordId AND w.user.id=:userId"),
+        @NamedQuery(name = Word.DELETE_BY_WORD_IDS_AND_USER_ID, query = "DELETE FROM Word w WHERE w.user.id=:userId AND w.id IN (:wordIds)"),
+        @NamedQuery(name = Word.GET_ALL_BY_USER_ID, query = "SELECT w FROM Word w WHERE w.user.id=:userId"),
 })
 @NamedNativeQueries({
         @NamedNativeQuery(
@@ -23,10 +23,12 @@ import javax.validation.constraints.Size;
         ),
 })
 public class Word extends AbstractBaseEntity{
-    public static final String DELETE_BY_ID = "Word.deleteById";
-    public static final String DELETE_BY_IDS = "Word.deleteByIds";
-    public static final String GET_ALL = "Word.getAll";
-    public static final String GET_UNLEARNED_WORDS = "Word.getUnlearned";
+    public static final String DELETE_BY_WORD_ID_AND_USER_ID = "Word.deleteByWordIdAndUserId";
+    public static final String DELETE_BY_WORD_IDS_AND_USER_ID = "Word.deleteByWordIdsAndUserId";
+
+    public static final String GET_ALL_BY_USER_ID = "Word.getAllByUserId";
+    public static final String GET_UNLEARNED_WORDS = "Word.getUnlearnedWords";
+
     @Column(name = "word", nullable = false)
     @NotBlank
     @Size(min = 2, max = 120)

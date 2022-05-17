@@ -1,5 +1,7 @@
 package ru.dictionary.repo.jdbc;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -17,19 +19,19 @@ import java.util.Optional;
 @Repository
 @Transactional(readOnly = true)
 public class JDBCUserWordTrainingRepo implements UserWordTrainingRepo {
+    private static final Logger log = LoggerFactory.getLogger(JDBCUserWordTrainingRepo.class);
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert insert;
 
     public JDBCUserWordTrainingRepo(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-        this.jdbcTemplate = jdbcTemplate;
         insert = new SimpleJdbcInsert(jdbcTemplate).withTableName("user_word_training");
     }
 
     @Override
     @Transactional
     public void moveWordToLearning(Integer userId, Integer wordId, Integer trainingId) {
+        log.info("moveWordToLearning for userId={}, wordId={}, trainingId={}", userId, wordId, trainingId);
         if (insert.execute(Map.<String, Integer>of("user_id", userId, "word_id", wordId, "training_id", trainingId)) == 0)
             throw new NotFoundException("Not found wordId=" + wordId + "or userId=" + userId);
     }
@@ -37,18 +39,20 @@ public class JDBCUserWordTrainingRepo implements UserWordTrainingRepo {
     @Override
     @Transactional
     public void moveWordsToLearning(Integer userId, List<Integer> wordIds, Integer trainingId) {
+        log.info("moveWordsToLearning for userId={}, wordIds={}, trainingId={}", userId, wordIds, trainingId);
         List<MapSqlParameterSource> entries = new ArrayList<>();
         wordIds.forEach(
                 wordId -> entries.add(
                         new MapSqlParameterSource(Map.of("user_id", userId, "word_id", wordId, "training_id", trainingId))
                 )
         );
-        int[] ints = insert.executeBatch(entries.toArray(new MapSqlParameterSource[entries.size()]));
+        insert.executeBatch(entries.toArray(new MapSqlParameterSource[entries.size()]));
     }
 
     @Override
     @Transactional
     public void moveWordToLearned(Integer userId, Integer wordId, Integer trainingId) {
+        log.info("moveWordToLearned for userId={}, wordId={}, trainingId={}", userId, wordId, trainingId);
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
                 .addValue("userId", userId)
                 .addValue("trainingId", trainingId)
@@ -62,6 +66,7 @@ public class JDBCUserWordTrainingRepo implements UserWordTrainingRepo {
     @Override
     @Transactional
     public void moveWordsToLearned(Integer userId, List<Integer> wordIds, Integer trainingId) {
+        log.info("moveWordsToLearned for userId={}, wordIds={}, trainingId={}", userId, wordIds, trainingId);
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
                 .addValue("userId", userId)
                 .addValue("trainingId", trainingId)
@@ -75,11 +80,13 @@ public class JDBCUserWordTrainingRepo implements UserWordTrainingRepo {
 
     @Override
     public int getNumOfUnlearnedWords(Integer userId, Integer trainingId) {
+        log.info("getNumOfUnlearnedWords for userId={}, trainingId={}", userId, trainingId);
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
         mapSqlParameterSource
                 .addValue("userId", userId)
                 .addValue("trainingId", trainingId);
         return  Optional.ofNullable(namedParameterJdbcTemplate.queryForObject(
-                "SELECT count(word_id) FROM user_word_training WHERE user_id=:userId AND training_id=:trainingId", mapSqlParameterSource, Integer.class)).orElse(0);
+                "SELECT count(word_id) FROM user_word_training WHERE user_id=:userId AND training_id=:trainingId",
+                mapSqlParameterSource, Integer.class)).orElse(0);
     }
 }

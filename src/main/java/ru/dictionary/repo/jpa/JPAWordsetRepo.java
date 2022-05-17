@@ -1,6 +1,9 @@
 package ru.dictionary.repo.jpa;
 
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.dictionary.entity.User;
@@ -19,7 +22,9 @@ import java.util.Objects;
 
 @Transactional(readOnly = true)
 @Repository
+@Profile("jpa")
 public class JPAWordsetRepo implements WordsetRepo {
+    private static final Logger log = LoggerFactory.getLogger(JPAWordsetRepo.class);
     @PersistenceContext
     EntityManager em;
 
@@ -27,6 +32,7 @@ public class JPAWordsetRepo implements WordsetRepo {
     @Transactional
     public Wordset save(Wordset wordset, Integer userId) {
         wordset.setUser(em.getReference(User.class, userId));
+        log.info("save wordset {} for userId{}", wordset, userId);
         em.persist(wordset);
 
         return wordset;
@@ -35,17 +41,18 @@ public class JPAWordsetRepo implements WordsetRepo {
     @Override
     @Transactional
     public void delete(Integer wordsetId, Integer userId) {
-        boolean deleted = em.createNamedQuery(Wordset.DELETE_BY_ID)
+        log.info("delete wordsetId {} for userId{}", wordsetId, userId);
+        boolean deleted = em.createNamedQuery(Wordset.DELETE_BY_WS_ID_AND_USER_ID)
                 .setParameter("wordsetId", wordsetId)
                 .setParameter("userId", userId)
                 .executeUpdate() != 0;
-        ValidationUtil.checkNotFoundWithId(deleted, wordsetId);
     }
 
     @Override
     @Transactional
     public void delete(List<Integer> wordsetIds, Integer userId) {
-        em.createNamedQuery(Wordset.DELETE_BY_IDS)
+        log.info("delete wordsetIds {} for userId{}", wordsetIds, userId);
+        em.createNamedQuery(Wordset.DELETE_BY_WS_IDS_AND_USER_ID)
                 .setParameter("wordsetIds", wordsetIds)
                 .setParameter("userId", userId)
                 .executeUpdate();
@@ -54,6 +61,7 @@ public class JPAWordsetRepo implements WordsetRepo {
     @Override
     @Transactional
     public Wordset rename(Integer wordsetId, Integer userId, String name) {
+        log.info("rename wordsetId {} for userId{} new name{}", wordsetId, userId, name);
         Wordset ws = getById(wordsetId, userId);
         ws.setName(name);
         return em.merge(ws);
@@ -61,6 +69,7 @@ public class JPAWordsetRepo implements WordsetRepo {
 
     @Override
     public Wordset getById(Integer wordsetId, Integer userId) {
+        log.info("get wordset by id {} for userId{}", wordsetId, userId);
         Wordset ws = em.find(Wordset.class, wordsetId);
         if (isUserOwningWordset(ws, userId))
             return ws;
@@ -70,13 +79,15 @@ public class JPAWordsetRepo implements WordsetRepo {
 
     @Override
     public List<Wordset> getAll(Integer userId) {
-        return em.createNamedQuery(Wordset.GET_ALL, Wordset.class)
+        log.info("get all wordsets by userId{}", userId);
+        return em.createNamedQuery(Wordset.GET_ALL_BY_USER_ID, Wordset.class)
                 .setParameter("userId", userId)
                 .getResultList();
     }
 
     @Override
     public List<Word> getWords(Integer wordsetId, Integer userId) {
+        log.info("get words from wordset by wordsetId{} and userId{}", wordsetId, userId);
         return em.createNamedQuery(Wordset.GET_WORDS, Wordset.class)
                 .setParameter("wordsetId", wordsetId)
                 .setParameter("userId", userId)
@@ -86,12 +97,13 @@ public class JPAWordsetRepo implements WordsetRepo {
     @Override
     @Transactional
     public void deleteWord(Integer wordId, Integer wordsetId, Integer userId) {
+        log.info("delete word from wordset by wordsetId{}, userId{} and wordId={}", wordsetId, userId, wordId);
         Wordset ws = em.getReference(Wordset.class, wordsetId);
         boolean deleted = false;
         if (isUserOwningWordset(ws, userId))
-            deleted = em.createNamedQuery(Word.DELETE_BY_ID)
+            deleted = em.createNamedQuery(Wordset.DELETE_WORD_BY_WORDSET_ID_AND_WORD_ID)
                     .setParameter("wordId", wordId)
-                    .setParameter("userId", userId)
+                    .setParameter("wordsetId", wordsetId)
                     .executeUpdate() != 0;
         ValidationUtil.checkNotFoundWithId(deleted, wordId);
     }
@@ -99,23 +111,29 @@ public class JPAWordsetRepo implements WordsetRepo {
     @Override
     @Transactional
     public void deleteWords(List<Integer> wordIds, Integer wordsetId, Integer userId) {
+        log.info("delete words from wordset by wordsetId{}, userId{} and wordIds={}", wordsetId, userId, wordIds);
         Wordset ws = em.getReference(Wordset.class, wordsetId);
 
         if (isUserOwningWordset(ws, userId))
-            em.createNamedQuery(Word.DELETE_BY_IDS)
+            em.createNamedQuery(Wordset.DELETE_WORDS_BY_WORDSET_ID_AND_WORD_IDS)
                     .setParameter("wordIds", wordIds)
-                    .setParameter("userId", userId)
+                    .setParameter("wordsetId", wordsetId)
                     .executeUpdate();
+        else
+            throw new NotFoundException("wordset with id=" + wordsetId);
     }
 
     @Override
     @Transactional
     public void addWord(Integer wordId, Integer wordsetId, Integer userId) {
+        log.info("add word to wordset by wordsetId{}, userId{} and wordId={}", wordsetId, userId, wordId);
         Wordset ws = em.getReference(Wordset.class, wordsetId);
 
         if (isUserOwningWordset(ws, userId)) {
-            ws.getWords().add(em.getReference(Word.class, wordId));
-            em.persist(ws);
+            em.createNamedQuery(Wordset.ADD_WORD_TO_WS)
+                    .setParameter("wordId", wordId)
+                    .setParameter("wordsetId", wordsetId)
+                    .executeUpdate();
         }
         else
             throw new NotFoundException("Not found wordset with id=" + wordsetId);
@@ -124,13 +142,14 @@ public class JPAWordsetRepo implements WordsetRepo {
     @Override
     @Transactional
     public void addWords(List<Integer> wordIds, Integer wordsetId, Integer userId) {
+        log.info("add words to wordset by wordsetId{}, userId{} and wordIds={}", wordsetId, userId, wordIds);
         Wordset ws = em.getReference(Wordset.class, wordsetId);
 
         if (!isUserOwningWordset(ws, userId))
             throw new NotFoundException("Not found wordset with id=" + wordsetId);
 
         Session hibernateSession = em.unwrap(Session.class);
-        String sql = "insert into wordset_word (word_id, wordset_id) values (:word_id, :wordset_id)";
+        String sql = Wordset.INSERT_WORDS;
         hibernateSession.doWork(connection -> {
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 int i = 1;
@@ -144,8 +163,6 @@ public class JPAWordsetRepo implements WordsetRepo {
                     i++;
                 }
                 preparedStatement.executeBatch();
-            } catch (SQLException e) {
-                //TODO: logging
             }
         });
     }

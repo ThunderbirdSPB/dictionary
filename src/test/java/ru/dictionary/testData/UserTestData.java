@@ -15,6 +15,7 @@ public class UserTestData {
             new User(2, "admin@gmail.com", "admin"));
 
     public static final Integer USER_ID = 1;
+    public static final Integer NOT_EXISTING_USER_ID = Integer.MAX_VALUE;
     public static final String NEW_EMAIL = "newEmail@gmail.com";
 
     public static final MatcherFactory.Matcher<User> USER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(User.class, "words");

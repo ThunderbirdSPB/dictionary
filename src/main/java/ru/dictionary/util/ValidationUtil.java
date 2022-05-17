@@ -38,4 +38,8 @@ public class ValidationUtil {
             throw new NotFoundException("Not found entity with " + msg);
         }
     }
+
+    public static <T extends AbstractBaseEntity> boolean isNew(T bean){
+        return bean.getId() == null;
+    }
 }
