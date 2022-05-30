@@ -15,13 +15,15 @@ import java.util.List;
 public interface CrudWordsetRepo extends JpaRepository<Wordset, Integer> {
     @Transactional
     @Modifying
-    void deleteByWsIdAndUserId(@Param("wordsetId") Integer wordsetId, @Param("userId") Integer userId) throws EntityNotFoundException;
+    int deleteByWsIdAndUserId(@Param("wordsetId") Integer wordsetId, @Param("userId") Integer userId) throws EntityNotFoundException;
 
     @Transactional
     @Modifying
     void deleteByWsIdsAndUserId(List<Integer> wordsetIds, Integer userId);
 
     List<Wordset> getAllByUserId( @Param("userId") Integer userId);
+
+    Wordset getByWsIdAndUserId(@Param("wsId") Integer wsId, @Param("userId") Integer userId);
 
     Wordset getWords(@Param("wordsetId") Integer wordsetId, @Param("userId") Integer userId);
 
@@ -38,5 +40,5 @@ public interface CrudWordsetRepo extends JpaRepository<Wordset, Integer> {
     @Modifying
     @Transactional
     @Query(nativeQuery = true, name = Wordset.ADD_WORD_TO_WS)
-    void addWord(@Param("wordId") Integer wordId, @Param("wordsetId") Integer wordsetId);
+    int addWord(@Param("wordId") Integer wordId, @Param("wordsetId") Integer wordsetId);
 }

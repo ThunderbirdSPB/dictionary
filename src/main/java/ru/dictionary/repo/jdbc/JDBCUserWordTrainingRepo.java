@@ -32,8 +32,7 @@ public class JDBCUserWordTrainingRepo implements UserWordTrainingRepo {
     @Transactional
     public void moveWordToLearning(Integer userId, Integer wordId, Integer trainingId) {
         log.info("moveWordToLearning for userId={}, wordId={}, trainingId={}", userId, wordId, trainingId);
-        if (insert.execute(Map.<String, Integer>of("user_id", userId, "word_id", wordId, "training_id", trainingId)) == 0)
-            throw new NotFoundException("Not found wordId=" + wordId + "or userId=" + userId);
+        insert.execute(Map.of("user_id", userId, "word_id", wordId, "training_id", trainingId));
     }
 
     @Override
@@ -46,7 +45,7 @@ public class JDBCUserWordTrainingRepo implements UserWordTrainingRepo {
                         new MapSqlParameterSource(Map.of("user_id", userId, "word_id", wordId, "training_id", trainingId))
                 )
         );
-        insert.executeBatch(entries.toArray(new MapSqlParameterSource[entries.size()]));
+        insert.executeBatch(entries.toArray(new MapSqlParameterSource[0]));
     }
 
     @Override
@@ -57,10 +56,9 @@ public class JDBCUserWordTrainingRepo implements UserWordTrainingRepo {
                 .addValue("userId", userId)
                 .addValue("trainingId", trainingId)
                 .addValue("wordId", wordId);
-        if (namedParameterJdbcTemplate.update(
+        namedParameterJdbcTemplate.update(
                 "DELETE FROM user_word_training WHERE user_id=:userId AND word_id=:wordId AND training_id=:trainingId",
-                mapSqlParameterSource) == 0)
-            throw new NotFoundException("Not found wordId=" + wordId + "or userId=" + userId + "or trainingId=" + trainingId);
+                mapSqlParameterSource);
     }
 
     @Override

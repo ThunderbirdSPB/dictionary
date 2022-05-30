@@ -13,6 +13,8 @@ import ru.dictionary.util.exception.NotFoundException;
 import java.util.List;
 import java.util.Objects;
 
+import static ru.dictionary.util.ValidationUtil.checkNotFoundWithId;
+
 @Repository
 @Profile("datajpa")
 public class DataJpaWordRepo implements WordRepo {
@@ -27,6 +29,7 @@ public class DataJpaWordRepo implements WordRepo {
 
     @Override
     public Word save(Word word, Integer userId) {
+        ValidationUtil.checkIsNew(word);
         ValidationUtil.validate(word);
         word.setUser(userRepo.getById(userId));
         log.info("save word {}", word);
@@ -36,7 +39,8 @@ public class DataJpaWordRepo implements WordRepo {
     @Override
     public void delete(Integer wordId, Integer userId) {
         log.info("delete word with wordId={} and userId={}", wordId, userId);
-        wordRepo.deleteByWordIdAndUserId(wordId, userId);
+        int count = wordRepo.deleteByWordIdAndUserId(wordId, userId);
+        checkNotFoundWithId(count != 0, wordId);
     }
 
     @Override
@@ -47,24 +51,21 @@ public class DataJpaWordRepo implements WordRepo {
 
     @Override
     public Word update(Word word, Integer userId) {
-        if (ValidationUtil.isNew(word))
-            throw new NotFoundException("word doesn't exist");
+        ValidationUtil.checkIsNotNew(word);
+
+        getById(word.getId(), userId);
         log.info("update word {} with userId={}", word, userId);
-        if (Objects.equals(word.getUser().getId(), userId))
-            return wordRepo.save(word);
-        else
-            throw new NotFoundException("Not found word with id=" + word.getId());
+        return wordRepo.save(word);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Word getById(Integer wordId, Integer userId) {
         log.info("get word by wordId={} and userId={}", wordId, userId);
-        Word word = wordRepo.getById(wordId);
-        if (Objects.equals(word.getUser().getId(), userId))
-            return word;
-        else
+        Word word = wordRepo.getByIdAndUserId(wordId, userId);
+        if (word == null)
             throw new NotFoundException("Not found word with id=" + wordId);
+        return word;
     }
 
     @Override

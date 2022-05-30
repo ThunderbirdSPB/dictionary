@@ -9,12 +9,10 @@ import ru.dictionary.entity.User;
 import ru.dictionary.entity.Word;
 import ru.dictionary.repo.WordRepo;
 import ru.dictionary.util.ValidationUtil;
-import ru.dictionary.util.exception.NotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-import java.util.Objects;
 
 @Profile("jpa")
 @Repository
@@ -27,6 +25,7 @@ public class JPAWordRepo implements WordRepo {
     @Transactional
     @Override
     public Word save(Word word, Integer userId) {
+        ValidationUtil.checkIsNew(word);
         word.setUser(em.getReference(User.class, userId));
         log.info("save word {} for user with id {}", word, userId);
         em.persist(word);
@@ -57,23 +56,20 @@ public class JPAWordRepo implements WordRepo {
     @Transactional
     @Override
     public Word update(Word word, Integer userId) {
-        if (ValidationUtil.isNew(word))
-            throw new NotFoundException("word doesn't exist");
+        ValidationUtil.checkIsNotNew(word);
+        getById(word.getId(), userId);
         log.info("update word {} for userId {}", word, userId);
-        if (Objects.equals(word.getUser().getId(), userId))
-            return em.merge(word);
-        else
-            throw new NotFoundException("Not found word with id=" + word.getId());
+        return em.merge(word);
     }
 
     @Override
     public Word getById(Integer wordId, Integer userId) {
         log.info("get word by id {} for userId {}", wordId, userId);
-        Word word = em.find(Word.class, wordId);
-        if (word != null && Objects.equals(word.getUser().getId(), userId))
-            return word;
-        else
-            throw new NotFoundException("Not found word with id=" + wordId);
+
+        return em.createNamedQuery(Word.GET_BY_ID_AND_USER_ID, Word.class)
+                .setParameter("wordId", wordId)
+                .setParameter("userId", userId)
+                .getSingleResult();
     }
 
     @Override

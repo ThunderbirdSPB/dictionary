@@ -29,7 +29,7 @@ CREATE TABLE wordsets(
   name          TEXT        NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
-CREATE UNIQUE INDEX unique_ws_name ON wordsets (id, name);
+CREATE UNIQUE INDEX unique_ws_name_user ON wordsets (user_id, name);
 
 CREATE TABLE wordset_word(
     word_id     INTEGER     NOT NULL,

@@ -27,6 +27,7 @@ public class JPAUserRepo implements UserRepo {
     @Transactional
     @Override
     public User save(User user) {
+        ValidationUtil.checkIsNew(user);
         log.info("save user {}", user);
         em.persist(user);
         return user;
@@ -36,10 +37,11 @@ public class JPAUserRepo implements UserRepo {
     @Override
     public void delete(Integer id) {
         log.info("delete user with id{}", id);
-        boolean deleted = em.createNamedQuery(User.DELETE)
+        checkNotFoundWithId(
+                em.createNamedQuery(User.DELETE)
                 .setParameter("id", id)
-                .executeUpdate() != 0;
-        checkNotFoundWithId(deleted, id);
+                .executeUpdate() != 0, id
+        );
     }
 
     @Override
@@ -57,9 +59,8 @@ public class JPAUserRepo implements UserRepo {
     @Transactional
     @Override
     public User update(User user) {
+        ValidationUtil.checkIsNotNew(user);
         log.info("update user {}", user);
-        if (ValidationUtil.isNew(user))
-            throw new NotFoundException("user doesn't exist");
         return em.merge(user);
     }
 }

@@ -14,7 +14,8 @@ import java.util.List;
         @NamedQuery(name = Wordset.DELETE_BY_WS_ID_AND_USER_ID, query = "DELETE FROM Wordset w WHERE w.id = :wordsetId AND w.user.id = :userId"),
         @NamedQuery(name = Wordset.DELETE_BY_WS_IDS_AND_USER_ID, query = "DELETE FROM Wordset w WHERE w.user.id = :userId AND w.id IN (:wordsetIds)"),
         @NamedQuery(name = Wordset.GET_ALL_BY_USER_ID, query = "SELECT w FROM Wordset w WHERE w.user.id = :userId"),
-        @NamedQuery(name = Wordset.GET_WORDS, query = "SELECT ws FROM Wordset ws INNER JOIN FETCH ws.words WHERE ws.user.id = :userId AND ws.id = :wordsetId"),
+        @NamedQuery(name = Wordset.GET_WORDS_BY_WS_ID_AND_USER_ID, query = "SELECT ws FROM Wordset ws INNER JOIN FETCH ws.words WHERE ws.user.id = :userId AND ws.id = :wordsetId"),
+        @NamedQuery(name = Wordset.GET_BY_WS_ID_AND_USER_ID, query = "SELECT ws FROM Wordset ws WHERE ws.id=:wsId AND ws.user.id=:userId")
 })
 
 @NamedNativeQueries({
@@ -35,7 +36,8 @@ public class Wordset extends AbstractBaseEntity{
     public static final String DELETE_BY_WS_ID_AND_USER_ID = "Wordset.deleteByWsIdAndUserId";
     public static final String DELETE_BY_WS_IDS_AND_USER_ID = "Wordset.deleteByWsIdsAndUserId";
     public static final String GET_ALL_BY_USER_ID = "Wordset.getAllByUserId";
-    public static final String GET_WORDS = "Wordset.getWords";
+    public static final String GET_WORDS_BY_WS_ID_AND_USER_ID = "Wordset.getWords";
+    public static final String GET_BY_WS_ID_AND_USER_ID = "Wordset.getByWsIdAndUserId";
     public static final String INSERT_WORDS = "INSERT INTO wordset_word (word_id, wordset_id) VALUES (?, ?)";
     public static final String DELETE_WORD_BY_WORDSET_ID_AND_WORD_ID = "Word.deleteWordByWordIdAndWordsetId";
     public static final String DELETE_WORDS_BY_WORDSET_ID_AND_WORD_IDS = "Word.deleteWordsByWordIdsAndWordsetId";

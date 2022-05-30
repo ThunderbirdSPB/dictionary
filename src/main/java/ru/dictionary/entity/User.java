@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User extends AbstractBaseEntity{
-    public static final String DELETE = "User.delete";
+    public static final String DELETE = "User.deleteByUserId";
     public static final String GET_ALL = "User.getAll";
 
     @Column(name = "email", unique = true, nullable = false)

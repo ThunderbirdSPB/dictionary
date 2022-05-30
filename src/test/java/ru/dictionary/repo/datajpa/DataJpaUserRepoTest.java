@@ -10,10 +10,4 @@ import static ru.dictionary.ActiveDbProfileResolver.DATAJPA;
 import static ru.dictionary.testData.UserTestData.NOT_EXISTING_USER_ID;
 
 @ActiveProfiles(DATAJPA)
-public class DataJpaUserRepoTest extends AbstractUserRepoTest {
-    @Override
-    @Test
-    protected void delete_NotExistingUser_exception() {
-        assertThrows(EmptyResultDataAccessException.class, () -> repo.delete(NOT_EXISTING_USER_ID));
-    }
-}
+public class DataJpaUserRepoTest extends AbstractUserRepoTest {}

@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
         @NamedQuery(name = Word.DELETE_BY_WORD_ID_AND_USER_ID, query = "DELETE FROM Word w WHERE w.id=:wordId AND w.user.id=:userId"),
         @NamedQuery(name = Word.DELETE_BY_WORD_IDS_AND_USER_ID, query = "DELETE FROM Word w WHERE w.user.id=:userId AND w.id IN (:wordIds)"),
         @NamedQuery(name = Word.GET_ALL_BY_USER_ID, query = "SELECT w FROM Word w WHERE w.user.id=:userId"),
+        @NamedQuery(name = Word.GET_BY_ID_AND_USER_ID, query = "SELECT w FROM Word w Where w.id=:wordId AND w.user.id=:userId")
 })
 @NamedNativeQueries({
         @NamedNativeQuery(
@@ -28,6 +29,7 @@ public class Word extends AbstractBaseEntity{
 
     public static final String GET_ALL_BY_USER_ID = "Word.getAllByUserId";
     public static final String GET_UNLEARNED_WORDS = "Word.getUnlearnedWords";
+    public static final String GET_BY_ID_AND_USER_ID = "Word.getByIdAndUserId";
 
     @Column(name = "word", nullable = false)
     @NotBlank
@@ -92,4 +94,5 @@ public class Word extends AbstractBaseEntity{
                 '}';
     }
 }
+
 

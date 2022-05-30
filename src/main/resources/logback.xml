@@ -13,7 +13,7 @@
 
     <logger name="ru.dictionary" level="debug"/>
 <!--    <logger name="org.springframework.security" level="debug"/>-->
-<!--    <logger name="org.springframework.web" level="debug"/>-->
+    <logger name="org.springframework.web" level="debug"/>
 
 
     <root level="info">

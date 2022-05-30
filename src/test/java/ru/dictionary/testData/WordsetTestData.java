@@ -13,6 +13,7 @@ public class WordsetTestData {
     public static final Wordset NEW_WS = new Wordset(null, "new");
     public static final Wordset UPDATED_WS = new Wordset(1, "updated");
     public static final Wordset WS = new Wordset(1, "fruits");
+    public static final Wordset NEW_WS_WITH_EXISTING_NAME = new Wordset(null, "fruits");
     public static final Wordset INVALID_WS = new Wordset(null, "");
 
     public static final List<Wordset> ALL_WS = List.of(WS);

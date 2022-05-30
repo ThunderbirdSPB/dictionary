@@ -12,6 +12,8 @@ import ru.dictionary.util.exception.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.dictionary.util.ValidationUtil.checkNotFoundWithId;
+
 @Repository
 @Profile("datajpa")
 public class DataJpaUserRepo implements UserRepo {
@@ -24,6 +26,7 @@ public class DataJpaUserRepo implements UserRepo {
 
     @Override
     public User save(User user) {
+        ValidationUtil.checkIsNew(user);
         log.info("save user {}", user);
         return userRepo.save(user);
     }
@@ -31,13 +34,13 @@ public class DataJpaUserRepo implements UserRepo {
     @Override
     public void delete(Integer id) {
         log.info("delete user with id={}", id);
-        userRepo.deleteById(id);
+        checkNotFoundWithId(userRepo.deleteByUserId(id) != 0, id);
     }
 
     @Override
     public User get(Integer id) {
         log.info("get user by id={}", id);
-        return userRepo.findById(id).orElseThrow(() -> new NotFoundException("Not found user with id=" + id));
+        return checkNotFoundWithId(userRepo.findById(id), id);
     }
 
     @Override
@@ -48,9 +51,8 @@ public class DataJpaUserRepo implements UserRepo {
 
     @Override
     public User update(User user) {
+        ValidationUtil.checkIsNotNew(user);
         log.info("update user {}", user);
-        if (ValidationUtil.isNew(user))
-            throw new NotFoundException("user doesn't exist");
         return userRepo.save(user);
     }
 }

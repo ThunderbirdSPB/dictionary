@@ -1,20 +1,24 @@
 package ru.dictionary.repo;
 
 import org.junit.jupiter.api.Test;
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.TransactionSystemException;
 import ru.dictionary.entity.User;
 import ru.dictionary.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.dictionary.testData.UserTestData.*;
 import static ru.dictionary.testData.UserTestData.USER_ID;
+import static ru.dictionary.testData.WordTestData.EMPTY_WORD;
 
 public abstract class AbstractUserRepoTest extends AbstractRepoTest {
     @Autowired
-    protected UserRepo repo;
+    private UserRepo repo;
 
     @Test
     void save_newUser_success(){
@@ -28,8 +32,10 @@ public abstract class AbstractUserRepoTest extends AbstractRepoTest {
     }
 
     @Test
-    protected void save_alreadyExistingEmail_exception(){
-        assertThrows(DataIntegrityViolationException.class, ()-> repo.save(user));
+    void save_alreadyExistingEmail_exception(){
+        assertThatExceptionOfType(Exception.class)
+                .isThrownBy(()->repo.save(user))
+                .withRootCauseInstanceOf(PSQLException.class);
     }
 
     @Test

@@ -1,10 +1,8 @@
 package ru.dictionary.repo;
 
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import ru.dictionary.ActiveDbProfileResolver;
 
 @SpringJUnitConfig(locations = {
         "classpath:spring/spring-app.xml",

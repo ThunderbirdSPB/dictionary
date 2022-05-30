@@ -12,7 +12,7 @@ import java.util.List;
 public interface CrudWordRepo extends JpaRepository<Word, Integer> {
     @Modifying
     @Transactional
-    void deleteByWordIdAndUserId(@Param("wordId") Integer wordId, @Param("userId") Integer userId);
+    int deleteByWordIdAndUserId(@Param("wordId") Integer wordId, @Param("userId") Integer userId);
 
     @Modifying
     @Transactional
@@ -21,4 +21,6 @@ public interface CrudWordRepo extends JpaRepository<Word, Integer> {
     List<Word> getAllByUserId(@Param("userId") Integer userId);
 
     List<Word> getUnlearnedWords(@Param("userId") Integer userId, @Param("trainingId") Integer trainingId);
+
+    Word getByIdAndUserId(@Param("wordId") Integer wordId, @Param("userId") Integer userId);
 }
