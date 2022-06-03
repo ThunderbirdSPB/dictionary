@@ -34,7 +34,7 @@ class JPAWordsetRepoTest extends AbstractWordsetRepoTest {
     @Test
     @Override
     protected void deleteWords_byNotExistingWordset_exception() {
-        assertThrows(NoResultException.class, () -> repo.deleteWords(WORD_IDS, NOT_EXISTING_WS_ID, USER_ID));
+        assertThrows(NoResultException.class, () -> repo.deleteWords(ALL_USERS_WORD_IDS, NOT_EXISTING_WS_ID, USER_ID));
     }
 
     @Test

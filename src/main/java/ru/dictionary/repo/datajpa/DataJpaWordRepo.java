@@ -53,9 +53,12 @@ public class DataJpaWordRepo implements WordRepo {
     public Word update(Word word, Integer userId) {
         ValidationUtil.checkIsNotNew(word);
 
-        getById(word.getId(), userId);
-        log.info("update word {} with userId={}", word, userId);
-        return wordRepo.save(word);
+        Word wordFromDb = getById(word.getId(), userId);
+        wordFromDb.setWord(word.getWord());
+        wordFromDb.setTranslation(word.getTranslation());
+        log.info("update word {} with userId={}", wordFromDb, userId);
+
+        return wordRepo.save(wordFromDb);
     }
 
     @Override

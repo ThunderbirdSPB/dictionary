@@ -26,6 +26,7 @@ public class WordTestData {
 
     public static final List<Integer> WORD_IDS_NOT_IN_WS = List.of(4,5,6);
     public static final List<Integer> WORD_IDS_IN_WS = List.of(1,2,3);
+    public static final String WORD_IDS = "1,2,3";
 
 
     public static final Integer APPLE_ID = 1;

@@ -82,4 +82,9 @@ public class WordRestController {
 
         return getTOsFromWords(repo.getAll(authUserId()));
     }
+
+    
+
 }
+
+

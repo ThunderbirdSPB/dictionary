@@ -17,7 +17,7 @@ public class WordsetTestData {
     public static final Wordset INVALID_WS = new Wordset(null, "");
 
     public static final List<Wordset> ALL_WS = List.of(WS);
-    public static final List<Integer> WORD_IDS = ALL_WORDS_FOR_USER.stream().map(AbstractBaseEntity::getId).collect(Collectors.toList());
+    public static final List<Integer> ALL_USERS_WORD_IDS = ALL_WORDS_FOR_USER.stream().map(AbstractBaseEntity::getId).collect(Collectors.toList());
     public static final List<Integer> NOT_ADDED_WORD_IDS = List.of(4,5,6);
 
     public static final Integer WS_ID = 1;

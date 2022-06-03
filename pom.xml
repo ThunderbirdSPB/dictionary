@@ -36,7 +36,7 @@
                 <version>2.22.2</version>
                 <configuration>
                     <systemPropertyVariables>
-<!--                                                <spring.profiles.active>datajpa</spring.profiles.active>-->
+                        <spring.profiles.active>datajpa</spring.profiles.active>
                     </systemPropertyVariables>
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>

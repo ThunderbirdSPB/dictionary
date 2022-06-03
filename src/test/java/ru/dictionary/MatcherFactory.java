@@ -1,5 +1,10 @@
 package ru.dictionary;
 
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
+import ru.dictionary.web.json.JsonUtil;
+
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -51,6 +56,18 @@ public class MatcherFactory {
 
         public void assertMatch(Iterable<T> actual, Iterable<T> expected) {
             iterableAssertion.accept(actual, expected);
+        }
+
+        public ResultMatcher contentJson(T expected) {
+            return result -> assertMatch(JsonUtil.readValue(getContent(result), clazz), expected);
+        }
+
+        public ResultMatcher contentJson(List<T> expected) {
+            return result -> assertMatch(JsonUtil.readValues(getContent(result), clazz), expected);
+        }
+
+        private static String getContent(MvcResult result) throws UnsupportedEncodingException {
+            return result.getResponse().getContentAsString();
         }
     }
 }

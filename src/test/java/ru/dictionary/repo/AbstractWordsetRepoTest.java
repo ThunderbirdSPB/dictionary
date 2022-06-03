@@ -111,12 +111,12 @@ public abstract class AbstractWordsetRepoTest extends AbstractRepoTest {
 
     @Test
     void deleteWords_byExistingWordset_success() {
-        repo.deleteWords(WORD_IDS, WS_ID, USER_ID);
+        repo.deleteWords(ALL_USERS_WORD_IDS, WS_ID, USER_ID);
     }
 
     @Test
     protected void deleteWords_byNotExistingWordset_exception() {
-        assertThrows(NotFoundException.class, () -> repo.deleteWords(WORD_IDS, NOT_EXISTING_WS_ID, USER_ID));
+        assertThrows(NotFoundException.class, () -> repo.deleteWords(ALL_USERS_WORD_IDS, NOT_EXISTING_WS_ID, USER_ID));
     }
 
     @Test
@@ -127,7 +127,7 @@ public abstract class AbstractWordsetRepoTest extends AbstractRepoTest {
     @Test
     protected void addWord_addAddedWordToExistingWordset_exception() {
         assertThatExceptionOfType(Exception.class)
-                .isThrownBy(()-> repo.addWord(WORD_IDS.get(0), WS_ID, USER_ID))
+                .isThrownBy(()-> repo.addWord(ALL_USERS_WORD_IDS.get(0), WS_ID, USER_ID))
                 .withRootCauseInstanceOf(PSQLException.class);
     }
 
@@ -143,6 +143,6 @@ public abstract class AbstractWordsetRepoTest extends AbstractRepoTest {
 
     @Test
     void addWords_addAddedWordsToExistingWordset_exception() {
-        assertThrows(org.hibernate.exception.ConstraintViolationException.class, () -> repo.addWords(WORD_IDS, WS_ID, USER_ID));
+        assertThrows(org.hibernate.exception.ConstraintViolationException.class, () -> repo.addWords(ALL_USERS_WORD_IDS, WS_ID, USER_ID));
     }
 }
