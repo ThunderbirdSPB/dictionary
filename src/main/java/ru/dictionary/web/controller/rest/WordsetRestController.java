@@ -1,8 +1,7 @@
-package ru.dictionary.web.controller;
+package ru.dictionary.web.controller.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,7 @@ import static ru.dictionary.util.SecurityUtil.authUserId;
 @RequestMapping(WordsetRestController.REST_URL)
 @RestController
 public class WordsetRestController {
-    static final String REST_URL = "/ws";
+    public static final String REST_URL = "/ws";
     private static final Logger log = LoggerFactory.getLogger(WordsetRestController.class);
 
     private final WordsetRepo repo;

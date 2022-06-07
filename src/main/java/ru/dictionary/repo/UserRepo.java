@@ -10,4 +10,5 @@ public interface UserRepo {
     User get(Integer id);
     List<User> getAll();
     User update(User user);
+    User getByEmail(String email);
 }

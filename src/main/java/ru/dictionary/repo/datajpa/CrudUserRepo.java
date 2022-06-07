@@ -1,5 +1,6 @@
 package ru.dictionary.repo.datajpa;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
@@ -11,4 +12,6 @@ public interface CrudUserRepo extends JpaRepository<User, Integer> {
     @Modifying
     @Transactional
     int deleteByUserId(@Param("id") Integer id);
+
+    User getByEmail(@Param("email") String email);
 }

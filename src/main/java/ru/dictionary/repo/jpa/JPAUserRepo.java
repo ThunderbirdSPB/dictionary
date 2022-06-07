@@ -63,6 +63,14 @@ public class JPAUserRepo implements UserRepo {
         log.info("update user {}", user);
         return em.merge(user);
     }
+
+    @Override
+    public User getByEmail(String email) {
+        log.info("get user by email{}", email);
+        return em.createNamedQuery(User.BY_EMAIL, User.class)
+                .setParameter("email", email)
+                .getSingleResult();
+    }
 }
 
 

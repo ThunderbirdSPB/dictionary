@@ -1,5 +1,5 @@
-INSERT INTO users(email, password) VALUES ('user@yandex.ru', 'password'),
-                                          ('admin@gmail.com', 'admin');
+INSERT INTO users(email, password) VALUES ('user@yandex.ru', '{noop}password'),
+                                          ('admin@gmail.com', '{noop}admin');
 
 INSERT INTO words(user_id, word, translation) VALUES (1, 'apple', 'яблоко'),
                                                      (1, 'orange', 'апельсин'),

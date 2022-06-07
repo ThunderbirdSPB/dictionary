@@ -55,5 +55,11 @@ public class DataJpaUserRepo implements UserRepo {
         log.info("update user {}", user);
         return userRepo.save(user);
     }
+
+    @Override
+    public User getByEmail(String email) {
+        log.info("get user by email{}", email);
+        return userRepo.getByEmail(email);
+    }
 }
 

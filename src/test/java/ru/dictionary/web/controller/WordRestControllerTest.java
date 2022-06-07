@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.dictionary.entity.Word;
 import ru.dictionary.testData.WordTestData;
+import ru.dictionary.web.controller.rest.WordRestController;
 import ru.dictionary.web.json.JsonUtil;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;

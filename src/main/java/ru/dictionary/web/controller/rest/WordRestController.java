@@ -1,4 +1,4 @@
-package ru.dictionary.web.controller;
+package ru.dictionary.web.controller.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -19,10 +21,11 @@ import java.util.List;
 import static ru.dictionary.util.SecurityUtil.authUserId;
 import static ru.dictionary.util.to.WordTOUtil.*;
 
+@PreAuthorize("isAuthenticated() and hasRole('USER')")
 @RestController
 @RequestMapping(WordRestController.REST_URL)
 public class WordRestController {
-    static final String REST_URL = "/words";
+    public static final String REST_URL = "/words";
     private static final Logger log = LoggerFactory.getLogger(WordRestController.class);
 
     private final WordRepo repo;
@@ -69,6 +72,7 @@ public class WordRestController {
         repo.delete(ids, authUserId());
     }
 
+    @Secured("User")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public WordTO get(@PathVariable Integer id){
         log.info("get word by id {}", id);

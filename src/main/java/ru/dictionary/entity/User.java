@@ -12,12 +12,14 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = User.DELETE, query = "DELETE FROM User u WHERE u.id=:id"),
         @NamedQuery(name = User.GET_ALL, query = "SELECT u FROM User u"),
+        @NamedQuery(name = User.BY_EMAIL, query = "SELECT u FROM User u WHERE u.email=:email"),
 })
 @Entity
 @Table(name = "users")
 public class User extends AbstractBaseEntity{
     public static final String DELETE = "User.deleteByUserId";
     public static final String GET_ALL = "User.getAll";
+    public static final String BY_EMAIL = "User.getByEmail";
 
     @Column(name = "email", unique = true, nullable = false)
     @Email
